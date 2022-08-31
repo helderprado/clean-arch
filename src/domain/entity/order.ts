@@ -14,6 +14,14 @@ export default class Order {
     this.validate();
   }
 
+  get id(): string {
+    return this._id;
+  }
+
+  get items(): OrderItem[] {
+    return this._items;
+  }
+
   validate(): boolean {
     if (this._id.length === 0) {
       throw Error("Id is required");
@@ -29,6 +37,10 @@ export default class Order {
       throw Error("Quantity must be greater than 0");
     }
     return true;
+  }
+
+  get customerId(): string {
+    return this._customerId;
   }
 
   total(): number {
