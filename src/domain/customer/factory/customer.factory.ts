@@ -1,5 +1,5 @@
-import { Customer } from "../entity/customer";
 import { uuid } from "uuidv4";
+import Customer from "../entity/customer";
 import Address from "../value-object/address";
 
 export default class CustomerFactory {

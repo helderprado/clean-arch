@@ -1,4 +1,6 @@
 import Entity from "../../@shared/entity/entity.abstract";
+import NotificationError from "../../@shared/notification/notification.error";
+import CustomerValidatorFactory from "../factory/customer.validator.factory";
 import Address from "../value-object/address";
 
 export default class Customer extends Entity {
@@ -9,9 +11,13 @@ export default class Customer extends Entity {
 
   constructor(id: string, name: string) {
     super();
-    this.id = id;
+    this._id = id;
     this._name = name;
     this.validate();
+
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.getErrors());
+    }
   }
 
   get name(): string {
@@ -27,19 +33,7 @@ export default class Customer extends Entity {
   }
 
   validate() {
-    if (this.id.length === 0) {
-      this.notification.addError({
-        context: "customer",
-        message: "Id is required",
-      });
-    }
-
-    if (this._name.length === 0) {
-      this.notification.addError({
-        context: "customer",
-        message: "Name is required",
-      });
-    }
+    CustomerValidatorFactory.create().validate(this);
   }
 
   changeName(name: string) {
@@ -60,7 +54,10 @@ export default class Customer extends Entity {
 
   activate() {
     if (this._address === undefined) {
-      throw new Error("Address is mandatory to activate a customer");
+      this.notification.addError({
+        context: "customer",
+        message: "Address is mandatory to activate a customer",
+      });
     }
     this._active = true;
   }
